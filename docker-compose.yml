@@ -143,6 +143,7 @@ services:
       BOK_CHOY_CMS_PORT: 18031
       EDXAPP_TEST_MONGO_HOST: edx.devstack.mongo
       NO_PYTHON_UNINSTALL: 1
+      PYTHONDONTWRITEBYTECODE: 1
     image: edxops/edxapp:${OPENEDX_RELEASE:-latest}
     ports:
       - "18000:18000"
@@ -189,6 +190,7 @@ services:
       BOK_CHOY_CMS_PORT: 18131
       EDXAPP_TEST_MONGO_HOST: edx.devstack.mongo
       NO_PYTHON_UNINSTALL: 1
+      PYTHONDONTWRITEBYTECODE: 1
     image: edxops/edxapp:${OPENEDX_RELEASE:-latest}
     ports:
       - "18010:18010"
