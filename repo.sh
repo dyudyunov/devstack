@@ -152,6 +152,7 @@ reset ()
 	    git checkout ${branch}
 	    git reset --hard origin/${branch}
 	    git pull
+	    find . -name "*.pyc" -exec rm -f '{}' \;
 	    cd "$currDir"
         else
             printf "The [%s] repo is not cloned. Continuing.\n" $name

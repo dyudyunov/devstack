@@ -94,9 +94,13 @@ before using docker or docker-compose builds.
 Known bugs
 ----------
 
-1. After stopping devstack via `make stop` or by shutting down docker application all modifications made inside containers
+1. Python virtual env. After stopping devstack via `make stop` or by shutting down docker application all modifications made inside containers
    will be lost. Unfortunately provisioned python virtual environment will be lost too.
    To reinstall edxapp python virtual for lms and studio containers `make dev.provision.prereqs` command was added.
+
+2. `*.pyc` files. Afrer changing branches for repositories the `*.pyc` files left on disk. To clear this files `make dev.repo.reset`
+   can be used.
+   Or just run `find ../edx-platform "*.pyc" -delete`
 
 Note for Linux and Windows WSL users
 ------------------------------------
