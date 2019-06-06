@@ -103,3 +103,4 @@ local.mk
 # The configuration varibles override files
 local*.sh
 local*.sh.sample
+local*.sh.disabled
