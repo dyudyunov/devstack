@@ -91,6 +91,13 @@ To use docker containers directly via `docker` or `docker-compose` commands it i
 set variables from `local-rg.sh <local-rg.sh>`_ in currect console shell session. Please execute `. ./local-rg.sh`
 before using docker or docker-compose builds.
 
+Known bugs
+----------
+
+1. After stopping devstack via `make stop` or by shutting down docker application all modifications made inside containers
+   will be lost. Unfortunately provisioned python virtual environment will be lost too.
+   To reinstall edxapp python virtual for lms and studio containers `make dev.provision.prereqs` command was added.
+
 Note for Linux and Windows WSL users
 ------------------------------------
 

@@ -277,3 +277,9 @@ check-memory: ## Check if enough memory has been allocated to Docker
 
 stats: ## Get per-container CPU and memory utilization data
 	docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"
+
+dev.provision.prereqs: ## reinstal python requirements in lms and studio
+	docker-compose exec lms bash -c 'rm /edx/app/edxapp/edx-platform/.prereqs_cache/Python_prereqs.sha1'
+	docker-compose exec lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 paver install_prereqs'
+	docker-compose exec studio bash -c 'rm /edx/app/edxapp/edx-platform/.prereqs_cache/Python_prereqs.sha1'
+	docker-compose exec studio bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 paver install_prereqs'
