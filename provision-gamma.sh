@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+GAMMA_CONFIG=$DEVSTACK_WORKSPACE/gamma/gamma/settings/local.py
+if [ ! -f "$GAMMA_CONFIG" ]; then
+    echo "$GAMMA_CONFIG does not exist, will create it using local_example.py"
+    cp $DEVSTACK_WORKSPACE/gamma/gamma/settings/local_example.py $DEVSTACK_WORKSPACE/gamma/gamma/settings/local.py
+fi
+
 docker-compose $DOCKER_COMPOSE_FILES up -d gamma
 
 # performing migrations
