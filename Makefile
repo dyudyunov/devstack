@@ -7,16 +7,14 @@
 .DEFAULT_GOAL := help
 .PHONY: requirements
 
-DEVSTACK_WORKSPACE ?= $(shell pwd)/..
-
 OS := $(shell uname)
 
-COMPOSE_PROJECT_NAME=devstack
-
-include local*.sh
-
-export DEVSTACK_WORKSPACE
+COMPOSE_PROJECT_NAME ?= $(shell grep COMPOSE_PROJECT_NAME= local*.sh | cut -f 2 -d =)
+DEVSTACK_WORKSPACE ?= $(shell grep DEVSTACK_WORKSPACE= local*.sh | cut -f 2 -d =)
+OPENEDX_RELEASE ?= $(shell grep OPENEDX_RELEASE= local*.sh | cut -f 2 -d =)
 export COMPOSE_PROJECT_NAME
+export DEVSTACK_WORKSPACE
+export OPENEDX_RELEASE
 
 include *.mk
 
