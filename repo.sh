@@ -24,9 +24,7 @@ if [ -z "$DEVSTACK_WORKSPACE" ]; then
         echo "Ones can store configuration variables in 'local.sh' file"
         exit 1
     fi
-elif [ -d "$DEVSTACK_WORKSPACE" ]; then
-    cd $DEVSTACK_WORKSPACE
-else
+elif [ ! -d "$DEVSTACK_WORKSPACE" ]; then
     echo "Workspace directory $DEVSTACK_WORKSPACE doesn't exist"
     exit 1
 fi
@@ -118,7 +116,6 @@ _clone ()
             fi
         fi
     done
-    cd - &> /dev/null
 }
 
 clone ()
@@ -133,7 +130,6 @@ clone_private ()
 
 reset ()
 {
-    currDir=$(pwd)
     for repobranch in ${repos[*]}
     do
         [[ $repobranch =~ $repobranch_pattern ]]
@@ -145,24 +141,20 @@ reset ()
 
         if [ -d "$name" ]; then
             echo "Resetting [${name}] to ${repo} and branch ${branch}..."
-            cd $name
-            git remote set-url origin ${repo}
-            git fetch
-            git reset --hard HEAD
-            git checkout ${branch}
-            git reset --hard origin/${branch}
-            git pull origin ${branch}
-            cd "$currDir"
+            git -C ${DEVSTACK_WORKSPACE}/${name} remote set-url origin ${repo}
+            git -C ${DEVSTACK_WORKSPACE}/${name} fetch
+            git -C ${DEVSTACK_WORKSPACE}/${name} reset --hard HEAD
+            git -C ${DEVSTACK_WORKSPACE}/${name} checkout ${branch}
+            git -C ${DEVSTACK_WORKSPACE}/${name} reset --hard origin/${branch}
+            git -C ${DEVSTACK_WORKSPACE}/${name} pull origin ${branch}
         else
             printf "The [%s] repo is not cloned. Continuing.\n" $name
         fi
     done
-    cd - &> /dev/null
 }
 
 status ()
 {
-    currDir=$(pwd)
     for repo in ${repos[*]}
     do
         [[ $repo =~ $name_pattern ]]
@@ -171,12 +163,12 @@ status ()
 
         if [ -d "$name" ]; then
             printf "\nGit status for [%s]:\n" $name
-            cd $name;git remote -v;git status;cd "$currDir"
+            git -C ${DEVSTACK_WORKSPACE}/${name} remote -v
+            git -C ${DEVSTACK_WORKSPACE}/${name} status
         else
             printf "The [%s] repo is not cloned. Continuing.\n" $name
         fi
     done
-    cd - &> /dev/null
 }
 
 if [ "$1" == "checkout" ]; then
