@@ -134,14 +134,25 @@ clone_private ()
 reset ()
 {
     currDir=$(pwd)
-    for repo in ${repos[*]}
+    for repobranch in ${repos[*]}
     do
+        [[ $repobranch =~ $repobranch_pattern ]]
+        repo="${BASH_REMATCH[1]}"
+        branch="${BASH_REMATCH[2]}"
         [[ $repo =~ $name_pattern ]]
         origin="${BASH_REMATCH[1]}"
         name="${BASH_REMATCH[2]}"
 
         if [ -d "$name" ]; then
-            cd $name;git reset --hard HEAD;git checkout master;git reset --hard origin/master;git pull;cd "$currDir"
+            echo "Resetting [${name}] to ${repo} and branch ${branch}..."
+            cd $name
+            git remote set-url origin ${repo}
+            git fetch
+            git reset --hard HEAD
+            git checkout ${branch}
+            git reset --hard origin/${branch}
+            git pull origin ${branch}
+            cd "$currDir"
         else
             printf "The [%s] repo is not cloned. Continuing.\n" $name
         fi
