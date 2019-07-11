@@ -139,7 +139,7 @@ reset ()
         origin="${BASH_REMATCH[1]}"
         name="${BASH_REMATCH[2]}"
 
-        if [ -d "$name" ]; then
+        if [ -d "${DEVSTACK_WORKSPACE}/${name}" ]; then
             echo "Resetting [${name}] to ${repo} and branch ${branch}..."
             git -C ${DEVSTACK_WORKSPACE}/${name} remote set-url origin ${repo}
             git -C ${DEVSTACK_WORKSPACE}/${name} fetch
@@ -161,8 +161,8 @@ status ()
         origin="${BASH_REMATCH[1]}"
         name="${BASH_REMATCH[2]}"
 
-        if [ -d "$name" ]; then
-            printf "\nGit status for [%s]:\n" $name
+        if [ -d "${DEVSTACK_WORKSPACE}/${name}" ]; then
+            printf "\nGit status for [%s]:\n" ${DEVSTACK_WORKSPACE}/${name}
             git -C ${DEVSTACK_WORKSPACE}/${name} remote -v
             git -C ${DEVSTACK_WORKSPACE}/${name} status
         else
