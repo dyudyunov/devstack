@@ -34,8 +34,8 @@ repos=(
     "https://github.com/edx/ecommerce.git,$OPENEDX_GIT_BRANCH"
     "https://github.com/edx/edx-e2e-tests.git,$OPENEDX_GIT_BRANCH"
     "https://github.com/edx/edx-notes-api.git,$OPENEDX_GIT_BRANCH"
-    "https://github.com/raccoongang/edx-platform.git,ironwood-rg"
-    "https://github.com/raccoongang/edx-theme.git,base-hawthorn-stage"
+    "https://gitlab.raccoongang.com/edx/edx-platform.git,ironwood-rg"
+    "https://gitlab.raccoongang.com/edx/edx-theme.git,ironwood-rg"
     "https://github.com/edx/xqueue.git,$OPENEDX_GIT_BRANCH"
     "https://github.com/edx/edx-analytics-pipeline.git,$OPENEDX_GIT_BRANCH"
 )
@@ -112,6 +112,7 @@ _checkout_and_update_branch ()
 {
     GIT_SYMBOLIC_REF="$(git -C ${DEVSTACK_WORKSPACE}/${name} symbolic-ref HEAD 2>/dev/null || true)"
     BRANCH_NAME=${GIT_SYMBOLIC_REF##refs/heads/}
+    git -C ${DEVSTACK_WORKSPACE}/${name} fetch --all --tags
     if [ "${BRANCH_NAME}" == "${branch}" ]; then
         git -C ${DEVSTACK_WORKSPACE}/${name} pull origin ${branch}
     else
