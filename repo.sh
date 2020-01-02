@@ -21,10 +21,12 @@ else
     exit 1
 fi
 
+echo "Working in ${DEVSTACK_WORKSPACE}"
+
 if [ -n "${OPENEDX_RELEASE}" ]; then
     OPENEDX_GIT_BRANCH=open-release/${OPENEDX_RELEASE}
 else
-    OPENEDX_GIT_BRANCH=master
+    OPENEDX_GIT_BRANCH=open-release/ironwood.master
 fi
 
 repos=(

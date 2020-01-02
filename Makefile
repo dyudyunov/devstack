@@ -27,9 +27,11 @@ else
 endif
 
 COMPOSE_PROJECT_NAME=devstack
+OPENEDX_RELEASE=ironwood.master
 
 export DEVSTACK_WORKSPACE
 export COMPOSE_PROJECT_NAME
+export OPENEDX_RELEASE
 
 include *.mk
 
