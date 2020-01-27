@@ -6,6 +6,10 @@ Official upstream's instructions can be found later in this file - `Open edX Dev
 Installation instructions
 -------------------------
 
+* make sure Docker Desktop - Advanced - Memory setting set above 3.5GiB.
+
+.. image:: docs/docker-memory-settings.png
+
 * create directory for ``devstack working environment``. The directory will contain
   clone of this repository and repositories created by provision script (edx-plaform,
   cs_comments_service, credentials, etc, etc). For example:
