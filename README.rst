@@ -4,6 +4,10 @@ RaccoonGang Open edX Devstack
 Installation instructions
 -------------------------
 
+Make sure Docker Desktop - Advanced - Memory setting set above 3.5GiB.
+
+.. image:: docs/docker-memory-settings.png
+
 Create a directory which will contain `devstack working environment`.
 `devstack` directory will contain clone of this repository, all other directories will
 be created by provision script.
