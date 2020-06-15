@@ -54,6 +54,8 @@ sleep 20
 
 echo -e "MySQL ready"
 
+docker exec -i edx.devstack.mysql mysql_upgrade -uroot || true
+
 echo -e "${GREEN}Creating databases and users...${NC}"
 docker exec -i edx.devstack.mysql mysql -uroot mysql < provision.sql
 docker exec -i edx.devstack.mongo mongo < mongo-provision.js

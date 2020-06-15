@@ -17,6 +17,8 @@ do
   sleep 1
 done
 
+docker exec -i edx.devstack.mysql mysql_upgrade -uroot || true
+
 docker exec -i edx.devstack.mysql mysql -uroot mysql < provision-xqueue.sql
 # Run migrations
 docker-compose $DOCKER_COMPOSE_FILES exec xqueue bash -c 'source /edx/app/xqueue/xqueue_env && cd /edx/app/xqueue/xqueue && python manage.py migrate'

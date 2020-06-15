@@ -36,6 +36,8 @@ done
 # This can be removed once https://github.com/docker-library/mysql/issues/245 is resolved.
 sleep 20
 
+docker exec -i edx.devstack.mysql mysql_upgrade -uroot || true
+
 # Analytics pipeline has dependency on lms but we only need its db schema & not full lms. So we'll just load their db
 # schemas as part of analytics pipeline provisioning. If there is a need of a fully fledged LMS, then provision lms
 # by following their documentation.
