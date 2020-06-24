@@ -17,5 +17,10 @@ then
 fi
 
 echo "Loading the $1 database..."
-docker exec -i edx.devstack.mysql mysql -uroot $1 < $1.sql
+if [ -f $1.sql.gz ]; then
+    gzip -dc $1.sql.gz | docker exec -i edx.devstack.mysql mysql -uroot $1
+else
+    docker exec -i edx.devstack.mysql mysql -uroot $1 < $1.sql
+fi
+
 echo "Finished loading the $1 database!"
