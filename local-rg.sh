@@ -39,9 +39,11 @@ repos=(
     "https://github.com/edx/ecommerce.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/edx/edx-e2e-tests.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/edx/edx-notes-api.git,open-release/${OPENEDX_RELEASE}"
-    "https://github.com/raccoongang/edx-platform.git,hawthorn-rg"
-    "https://github.com/raccoongang/edx-theme.git,base-hawthorn-stage"
+    "ssh://git@gitlab.raccoongang.com/edx/edx-platform.git,hawthorn-rg"
+    "ssh://git@gitlab.raccoongang.com/edx/edx-theme.git,hawthorn-rg"
     "https://github.com/edx/xqueue.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/edx/edx-analytics-pipeline.git,open-release/${OPENEDX_RELEASE}"
+    "ssh://git@gitlab.raccoongang.com/rg-developers/instructor-analytics.git,master"
+    "ssh://git@gitlab.raccoongang.com/rg-developers/instructor-analytics-log-collector.git,master"
 )
 export repos

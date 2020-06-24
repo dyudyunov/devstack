@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -x
 set -e
 set -o pipefail
 
@@ -58,7 +59,7 @@ if [ -z "${private_repos}" ]; then
 fi
 
 repobranch_pattern="(.*),(.*)"
-name_pattern=".*/(.*)/(.*).git"
+name_pattern='^(.*)/([^/]+).git$'
 
 _checkout ()
 {

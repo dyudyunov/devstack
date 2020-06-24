@@ -22,6 +22,12 @@ services:
       - edxapp_node_modules:/edx/app/edxapp/edx-platform/node_modules
       - ${DEVSTACK_WORKSPACE}/src:/edx/src:cached
       - ${DEVSTACK_WORKSPACE}/edx-theme:/edx/app/edxapp/themes/edx-theme:cached
+      - ${DEVSTACK_WORKSPACE}/instructor-analytics-log-collector:/edx/app/edxapp/venvs/edxapp/src/rg-instructor-analytics-log-collector:cached
+      - ${DEVSTACK_WORKSPACE}/instructor-analytics:/edx/app/edxapp/venvs/edxapp/src/rg-instructor-analytics:cached
+      - ~/.ssh/id_rsa:/edx/app/edxapp/.ssh/id_rsa:ro
+      - ~/.ssh/known_hosts:/edx/app/edxapp/.ssh/known_hosts:ro
+      - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - ~/.ssh/known_hosts:/root/.ssh/known_hosts:ro
   edx_notes_api:
     volumes:
       - ${DEVSTACK_WORKSPACE}/edx-notes-api:/edx/app/edx_notes_api/edx_notes_api:cached
@@ -32,6 +38,10 @@ services:
       - edxapp_node_modules:/edx/app/edxapp/edx-platform/node_modules
       - ${DEVSTACK_WORKSPACE}/src:/edx/src:cached
       - ${DEVSTACK_WORKSPACE}/edx-theme:/edx/app/edxapp/themes/edx-theme:cached
+      - ~/.ssh/id_rsa:/edx/app/edxapp/.ssh/id_rsa:ro
+      - ~/.ssh/known_hosts:/edx/app/edxapp/.ssh/known_hosts:ro
+      - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - ~/.ssh/known_hosts:/root/.ssh/known_hosts:ro
   forum:
     volumes:
       - ${DEVSTACK_WORKSPACE}/cs_comments_service:/edx/app/forum/cs_comments_service:cached

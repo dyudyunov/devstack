@@ -13,7 +13,25 @@ for app in "${apps[@]}"; do
     docker-compose $DOCKER_COMPOSE_FILES up -d $app
 done
 
-docker-compose exec lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 paver install_prereqs'
+docker-compose exec lms bash -c '
+    cd /edx/app/edxapp ; \
+    for f in *.json ; do \
+      test -f /edx/src/$f && \
+      mv -n $f $f.orig && \
+      ln -s /edx/src/$f $f \
+      || true ;
+    done'
+
+docker-compose exec studio bash -c '
+    cd /edx/app/edxapp ; \
+    for f in *.json ; do \
+      test -f /edx/src/$f && \
+      mv -n $f $f.orig && \
+      ln -s /edx/src/$f $f \
+      || true ;
+    done'
+
+docker-compose exec lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 PIP_EXISTS_ACTION=i paver install_prereqs'
 
 #Installing prereqs crashes the process
 docker-compose restart lms

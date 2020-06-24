@@ -280,3 +280,7 @@ stats: ## Get per-container CPU and memory utilization data
 
 studio-reindex-courses: ## Rebuild static assets for the Studio container
 	docker exec -t edx.devstack.studio bash -c 'echo y | /edx/app/edxapp/venvs/edxapp/bin/python /edx/app/edxapp/edx-platform/manage.py cms reindex_course --all --settings devstack_docker; echo y | /edx/app/edxapp/venvs/edxapp/bin/python /edx/app/edxapp/edx-platform/manage.py cms reindex_library --all --settings devstack_docker'
+
+rg-analytics-collect-logs: ## Run migrations LMS container
+	docker exec -t edx.devstack.lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && export DJANGO_SETTINGS_MODULE=lms.envs.devstack_docker && export SERVICE_VARIANT=lms ; while true ; do timeout 40 python /edx/app/edxapp/venvs/edxapp/src/rg-instructor-analytics-log-collector/run_log_watcher.py --sleep_time 40 --tracking_log_dir /edx/var/log/tracking --delete-logs ; echo "from rg_instructor_analytics.tasks import grade_collector_stat; grade_collector_stat()" | python ./manage.py lms shell --settings=devstack_docker ; done'
+

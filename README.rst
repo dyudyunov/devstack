@@ -100,6 +100,38 @@ To add this changes to the system permanently (will be applied after next reboot
 
   echo 'user.max_inotify_watches=30000' >> /etc/sysctl.conf
 
+
+RG Instructor Analytics
+-----------------------
+
+* you need to apply this changes to ``edx-platform/lms/envs/devstack_docker.py``
+
+.. code:: python
+
+    # Docker does not support the syslog socket at /dev/log. Rely on the console.
+
+    # LOGGING['handlers']['local'] = LOGGING['handlers']['tracking'] = {
+    LOGGING['handlers']['local'] = {
+        'class': 'logging.NullHandler',
+    }
+
+    # LOGGING['loggers']['tracking']['handlers'] = ['console']
+    LOGGING['handlers']['tracking'] = {
+        'class': 'logging.FileHandler',
+        'filename': '/edx/var/log/tracking/tracking.log',
+    }
+    LOGGING['loggers']['tracking']['handlers'] = ['tracking']
+
+* ``make provision`` (duh!)
+* start and keep running log_collector ``make rg-analytics-collect-logs`` in separate terminal window
+* make some progress on Demo Course
+* investigate statistics in ``Instructor analytics`` tab with ``SIENCE COURSE START`` range selected
+
+OFFICIAL DEVSTACK README BELOW
+==============================
+
+RaccoonGang's README finished here
+
 Open edX Devstack |Build Status|
 ================================
 
