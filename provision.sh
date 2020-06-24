@@ -71,4 +71,13 @@ docker-compose $DOCKER_COMPOSE_FILES up -d studio
 
 docker image prune -f
 
+set +x
+echo "${RED}
+      ==================================
+      === STATIC ASSETS NOT COMPILED ===
+      === please run                 ===
+      ===   make lms-static          ===
+      ===   make stusio-static       ===
+      ==================================
+${NC}"
 echo -e "${GREEN}Provisioning complete!${NC}"
