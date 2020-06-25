@@ -31,6 +31,8 @@ docker-compose exec studio bash -c '
       || true ;
     done'
 
+docker-compose exec lms bash -c 'chmod -R a+wrx /edx/var/log/tracking'
+
 docker-compose exec lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 PIP_EXISTS_ACTION=i paver install_prereqs'
 
 #Installing prereqs crashes the process
