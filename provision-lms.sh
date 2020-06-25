@@ -64,7 +64,7 @@ for app in "${apps[@]}"; do
           === STATIC ASSETS NOT COMPILED ===
           === please run                 ===
           ===   make lms-static          ===
-          ===   make stusio-static       ===
+          ===   make studio-static       ===
           =================================="
     # docker-compose exec $app bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && paver update_assets --settings devstack_docker'
 done
