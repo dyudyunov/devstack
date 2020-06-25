@@ -52,6 +52,8 @@ done
 # This can be removed once https://github.com/docker-library/mysql/issues/245 is resolved.
 sleep 20
 
+docker exec -i edx.devstack.mysql bash -c "mysql_tzinfo_to_sql /usr/share/zoneinfo | sed -e 's/Local time zone must be set--see zic manual page/local/' | mysql -u root mysql" || true
+
 echo -e "MySQL ready"
 
 echo -e "${GREEN}Creating databases and users...${NC}"
