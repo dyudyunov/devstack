@@ -1165,3 +1165,38 @@ GitHub issue which explains the `current status of implementing delegated consis
 .. _Running analytics acceptance tests in docker: http://edx-analytics-pipeline-reference.readthedocs.io/en/latest/running_acceptance_tests_in_docker.html
 .. _Troubleshooting docker analyticstack: http://edx-analytics-pipeline-reference.readthedocs.io/en/latest/troubleshooting_docker_analyticstack.html
 .. _Community: https://open.edx.org/community/connect/
+
+
+Docker Devstack Switcher
+========================
+
+Allows to switch between multiple projects w/o reprovisioning and having all the repositories already cloned (edx-playform, edx-theme, src/*, etc.).
+
+Usage
+-----
+
+1. Make a separate directory for you project (for example `hawthorn-project-1`)
+
+.. code:: sh
+
+    mkdir hawthorn-project-1
+
+2. Clone or copy `devstack` repository to this project directory (it will be `hawthorn-project-1/devstack`)
+
+.. code:: sh
+
+    git clone git@github.com:raccoongang/devstack.git hawthorn-project-1/devstack
+
+3. Run `./apply-project-prefix` in the cloned `devstack` repository root.
+
+.. code:: sh
+
+    cd hawthorn-project-1/devstack
+    ./apply-project-prefix project-1
+
+4. Then run the provision process as usual.
+
+Notes
+-----
+
+- Despite you won't need anymore reprovision your devstack when switching between the projects - you **could still run only one edx devstack at once**. To run another execute `make stop` on current and `make dev.up` on the new one.
