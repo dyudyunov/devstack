@@ -1,0 +1,68 @@
+#!/bin/bash
+if [[ ! -e docker-compose.yml ]]; then
+    echo
+    echo "Error - no docker-compose.yml file."
+    echo "Run this script from the 'devstack'."
+    echo
+    exit 1
+fi
+
+sed_fix_mac=$([[ `uname` == "Darwin" ]] && echo '1')
+
+containers=$(grep 'container_name: ' docker-compose.yml | awk '{print $2}' | xargs)
+
+if [[ -z "$1" ]]; then
+    read -p "Enter the project name: " project_name
+else
+    project_name="$1"
+fi
+
+project_name=$(echo $project_name | sed 's#[- ]#_#g;s#\(.*\)#\1#g' | awk '{print tolower($0)}')
+
+if [ -n "$sed_fix_mac" ]; then
+    sed -i '' -e 's/\([[:space:]]*\)\(container_name:[[:space:]]*\)\(.*\)/\1\2\3\#######\1networks:#######\1 default:#######\1  aliases:#######\1   - ###\3/g;s/#######/\'$'\n/g' docker-compose.yml
+else
+    sed 's/\(\s\+\)\(container_name:\s*\)\(\S\+\)/\1\2\3\n\1networks:\n\1  default:\n\1    aliases:\n\1      - ###\3/g' -i docker-compose.yml
+fi
+
+for container_name in $containers; do
+    container_name_pattern=$(echo $container_name | sed 's#\.#[.]#g')
+    files_to_change="docker-compose.yml"
+    for file_to_change in $files_to_change; do
+        if [ -n "$sed_fix_mac" ]; then
+            sed -i '' "s/$container_name_pattern/${project_name}.$container_name/g;s/###${project_name}.$container_name/$container_name/g" $file_to_change
+        else
+            sed "s/$container_name_pattern/${project_name}.$container_name/g;s/###${project_name}.$container_name/$container_name/g" -i $file_to_change
+        fi
+    done
+done
+
+#remove duplicated project_names
+if [ -n "$sed_fix_mac" ]; then
+    sed -i '' "s/${project_name}.${project_name}/${project_name}/g" docker-compose.yml
+else
+    sed "s/${project_name}.${project_name}/${project_name}/g" -i docker-compose.yml
+fi
+
+files_to_change=$(egrep -Rl --exclude=docker-compose.yml 'edx.devstack\.' . | sed 's#^\./##' | xargs)
+for file_to_change in $files_to_change; do
+    if [ -n "$sed_fix_mac" ]; then
+        sed -i '' 's/edx.devstack\./'${project_name}'.edx.devstack\./g' $file_to_change
+    else
+        sed 's/edx.devstack\./'${project_name}'.edx.devstack\./g' -i $file_to_change
+    fi
+done
+
+files_to_change=$(grep -Rl 'docker-compose ' . | sed 's#^\./##' | xargs)
+
+for file_to_change in $files_to_change; do
+    if [ -n "$sed_fix_mac" ]; then
+        [[ ! "$file_to_change" =~ "apply-project-prefix.sh"  ]] && sed -i '' "s/docker-compose /docker-compose -p $project_name /g" $file_to_change
+    else
+        [[ ! "$file_to_change" =~ "apply-project-prefix.sh"  ]] && sed "s/docker-compose /docker-compose -p $project_name /g" -i $file_to_change
+    fi
+done
+
+echo "
+mycli: ## Run mycli inside the mysql container
+	docker-compose -p $project_name exec mysql bash -c \"[[ ! -e .initialized  ]] && apt update && apt install python3-pip && python3 -m pip install mycli && touch .initialized; LC_ALL=C.UTF-8 LANG=C.UTF-8 mycli edxapp\"" >> Makefile
