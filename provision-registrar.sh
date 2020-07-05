@@ -3,6 +3,9 @@
 name=registrar
 port=18734
 
+ENVIRONMENT_OPENEDX_RELEASE="$OPENEDX_RELEASE"
+export OPENEDX_RELEASE=''
+
 docker-compose $DOCKER_COMPOSE_FILES up -d $name
 
 echo -e "${GREEN}Installing requirements for ${name}...${NC}"
@@ -20,3 +23,5 @@ docker exec -t edx.devstack.${name}  bash -c 'source /edx/app/registrar/registra
 # started if they do not care about static assets
 echo -e "${GREEN}Compiling static assets for ${name}...${NC}"
 docker exec -t edx.devstack.${name}  bash -c ' if ! source /edx/app/registrar/registrar_env && cd /edx/app/registrar/registrar && make static 2>registrar_make_static.err; then echo "------- Last 100 lines of stderr"; tail regsitrar_make_static.err -n 100; echo "-------"; fi;' -- "$name"
+
+export OPENEDX_RELEASE="$ENVIRONMENT_OPENEDX_RELEASE"
