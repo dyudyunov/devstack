@@ -732,7 +732,7 @@ or a manual Docker command to bring down the container:
 
 .. code:: sh
 
-   docker kill $(docker ps -a -q --filter="name=edx.devstack.<container name>")
+   docker kill $(docker ps -a -q --filter="name=edx.<compose project name>.<container name>")
 
 Running LMS and Studio Tests
 ----------------------------
