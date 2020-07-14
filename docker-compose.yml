@@ -13,7 +13,7 @@ version: "2.1"
 services:
   # Third-party services
   chrome:
-    container_name: edx.devstack.chrome
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.chrome
     hostname: chrome.devstack.edx
     image: edxops/chrome:${OPENEDX_RELEASE:-latest}
     shm_size: 2g
@@ -22,9 +22,13 @@ services:
     volumes:  # for file uploads
       - ../edx-e2e-tests/upload_files:/edx/app/e2e/edx-e2e-tests/upload_files
       - ../edx-platform/common/test/data:/edx/app/edxapp/edx-platform/common/test/data
+    networks:
+      default:
+        aliases:
+          - edx.devstack.chrome
 
   elasticsearch:
-    container_name: edx.devstack.elasticsearch
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.elasticsearch
     hostname: elasticsearch.devstack.edx
     image: edxops/elasticsearch:devstack
     # TODO: What to do about these forwarded ports? They'll conflict with ports forwarded by the Vagrant VM.
@@ -34,9 +38,13 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
       - elasticsearch_data:/usr/share/elasticsearch/logs
+    networks:
+      default:
+        aliases:
+          - edx.devstack.elasticsearch
 
   firefox:
-    container_name: edx.devstack.firefox
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.firefox
     hostname: firefox.devstack.edx
     image: edxops/firefox:${OPENEDX_RELEASE:-latest}
     shm_size: 2g
@@ -45,48 +53,64 @@ services:
     volumes:  # for file uploads
       - ../edx-e2e-tests/upload_files:/edx/app/e2e/edx-e2e-tests/upload_files
       - ../edx-platform/common/test/data:/edx/app/edxapp/edx-platform/common/test/data
+    networks:
+      default:
+        aliases:
+          - edx.devstack.firefox
 
   memcached:
-    container_name: edx.devstack.memcached
-    hostname: memcached.devstack.edx
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.memcached
     image: memcached:1.4.24
     # ports:
     #   - "11211:11211"
+    networks:
+      default:
+        aliases:
+          - edx.devstack.memcached
 
   mongo:
     # We use WiredTiger in all environments. In development environments we use small files
     # to conserve disk space, and disable the journal for a minor performance gain.
     # See https://docs.mongodb.com/v3.0/reference/program/mongod/#options for complete details.
     command: mongod --smallfiles --nojournal --storageEngine wiredTiger
-    container_name: edx.devstack.mongo
-    hostname: mongo.devstack.edx
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.mongo
     image: mongo:3.2.16
     # ports:
     #  - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      default:
+        aliases:
+          - edx.devstack.mongo
 
   mysql:
     command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
-    container_name: edx.devstack.mysql
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.mysql
     hostname: mysql.devstack.edx
     environment:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     image: mysql:5.6
     # ports:
-    #   - "3306:3306"
+    #   - "3506:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    image: mysql:5.6
+    networks:
+      default:
+        aliases:
+          - edx.devstack.mysql
 
   # edX services
   credentials:
     command: bash -c 'source /edx/app/credentials/credentials_env && while true; do python /edx/app/credentials/credentials/manage.py runserver 0.0.0.0:18150; sleep 2; done'
-    container_name: edx.devstack.credentials
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.credentials
     hostname: credentials.devstack.edx
     depends_on:
       - mysql
       - memcached
+      - lms
     # Allows attachment to the credentials service using 'docker attach <containerID>'.
     stdin_open: true
     tty: true
@@ -95,13 +119,18 @@ services:
       DB_HOST: edx.devstack.mysql
       SOCIAL_AUTH_EDX_OIDC_URL_ROOT: http://edx.devstack.lms:18000/oauth2
       ENABLE_DJANGO_TOOLBAR: 1
+      DJANGO_WATCHMAN_TIMEOUT: 30
     image: edxops/credentials:${OPENEDX_RELEASE:-latest}
     ports:
       - "18150:18150"
+    networks:
+      default:
+        aliases:
+          - edx.devstack.credentials
 
   discovery:
     command: bash -c 'source /edx/app/discovery/discovery_env && while true; do python /edx/app/discovery/discovery/manage.py runserver 0.0.0.0:18381; sleep 2; done'
-    container_name: edx.devstack.discovery
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.discovery
     hostname: discovery.devstack.edx
     depends_on:
       - mysql
@@ -113,31 +142,44 @@ services:
     environment:
       TEST_ELASTICSEARCH_URL: "http://edx.devstack.elasticsearch:9200"
       ENABLE_DJANGO_TOOLBAR: 1
+      DJANGO_WATCHMAN_TIMEOUT: 30
     image: edxops/discovery:${OPENEDX_RELEASE:-latest}
     ports:
       - "18381:18381"
     volumes:
       - discovery_assets:/edx/var/discovery/
+    networks:
+      default:
+        aliases:
+          - edx.devstack.discovery
+
 
   ecommerce:
     command: bash -c 'source /edx/app/ecommerce/ecommerce_env && while true; do python /edx/app/ecommerce/ecommerce/manage.py runserver 0.0.0.0:18130; sleep 2; done'
-    container_name: edx.devstack.ecommerce
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.ecommerce
     hostname: ecommerce.devstack.edx
     depends_on:
       - mysql
       - memcached
+      - lms
+      - discovery
     # Allows attachment to the ecommerce service using 'docker attach <containerID>'.
     stdin_open: true
     tty: true
     environment:
+      DJANGO_WATCHMAN_TIMEOUT: 30
       ENABLE_DJANGO_TOOLBAR: 1
     image: edxops/ecommerce:${OPENEDX_RELEASE:-latest}
     ports:
       - "18130:18130"
+    networks:
+      default:
+        aliases:
+          - edx.devstack.ecommerce
 
   lms:
     command: bash -c 'source /edx/app/edxapp/edxapp_env && while true; do python /edx/app/edxapp/edx-platform/manage.py lms runserver 0.0.0.0:18000 --settings devstack_docker; sleep 2; done'
-    container_name: edx.devstack.lms
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.lms
     hostname: lms.devstack.edx
     depends_on:
       - devpi
@@ -153,6 +195,7 @@ services:
       BOK_CHOY_CMS_PORT: 18031
       EDXAPP_TEST_MONGO_HOST: edx.devstack.mongo
       NO_PYTHON_UNINSTALL: 1
+      DJANGO_WATCHMAN_TIMEOUT: 30
     image: edxops/edxapp:${OPENEDX_RELEASE:-latest}
     ports:
       - "18000:18000"
@@ -161,10 +204,14 @@ services:
       # - "18031:18031"
     volumes:
       - edxapp_lms_assets:/edx/var/edxapp/staticfiles/
+    networks:
+      default:
+        aliases:
+          - edx.devstack.lms
 
   edx_notes_api:
     command: bash -c 'source /edx/app/edx_notes_api/edx_notes_api_env && while true; do python /edx/app/edx_notes_api/edx_notes_api/manage.py runserver 0.0.0.0:18120 --settings notesserver.settings.devstack; sleep 2; done'
-    container_name: edx.devstack.edx_notes_api
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.edxnotesapi
     hostname: edx_notes_api.devstack.edx
     depends_on:
       - devpi
@@ -180,18 +227,26 @@ services:
       DB_PASSWORD: "password"
       DB_PORT: "3306"
       DB_USER: "notes001"
+      DJANGO_WATCHMAN_TIMEOUT: 30
       ENABLE_DJANGO_TOOLBAR: 1
       ELASTICSEARCH_URL: "http://edx.devstack.elasticsearch:9200"
+    networks:
+      default:
+        aliases:
+          - edx.devstack.edxnotesapi
 
   studio:
     command: bash -c 'source /edx/app/edxapp/edxapp_env && while true; do python /edx/app/edxapp/edx-platform/manage.py cms runserver 0.0.0.0:18010 --settings devstack_docker; sleep 2; done'
-    container_name: edx.devstack.studio
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.studio
     hostname: studio.devstack.edx
     depends_on:
       - devpi
       - mysql
       - memcached
       - mongo
+      - firefox
+      - chrome
+      - lms
     # Allows attachment to the Studio service using 'docker attach <containerID>'.
     stdin_open: true
     tty: true
@@ -201,6 +256,7 @@ services:
       BOK_CHOY_CMS_PORT: 18131
       EDXAPP_TEST_MONGO_HOST: edx.devstack.mongo
       NO_PYTHON_UNINSTALL: 1
+      DJANGO_WATCHMAN_TIMEOUT: 30
     image: edxops/edxapp:${OPENEDX_RELEASE:-latest}
     ports:
       - "18010:18010"
@@ -209,10 +265,15 @@ services:
       # - "18131:18131"
     volumes:
       - edxapp_studio_assets:/edx/var/edxapp/staticfiles/
+    networks:
+      default:
+        aliases:
+          - edx.devstack.studio
+
 
   forum:
     command: bash -c 'source /edx/app/forum/ruby_env && source /edx/app/forum/devstack_forum_env && cd /edx/app/forum/cs_comments_service && bundle install && while true; do ruby app.rb -o 0.0.0.0 ; sleep 2; done'
-    container_name: edx.devstack.forum
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.forum
     hostname: forum.devstack.edx
     depends_on:
       - mongo
@@ -221,26 +282,39 @@ services:
     image: edxops/forum:${OPENEDX_RELEASE:-latest}
     ports:
       - "44567:4567"
+    networks:
+      default:
+        aliases:
+          - edx.devstack.forum
+
 
   devpi:
-    container_name: edx.devstack.devpi
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.devpi
     hostname: devpi.devstack.edx
     image: edxops/devpi:${OPENEDX_RELEASE:-latest}
     ports:
       - "3141:3141"
     volumes:
       - devpi_data:/data
+    networks:
+      default:
+        aliases:
+          - edx.devstack.devpi
 
   gradebook:
     command: bash -c 'npm install && npm run start'
     working_dir: '/edx/app/gradebook'
-    container_name: edx.devstack.gradebook
+    container_name: edx.${COMPOSE_PROJECT_NAME:-devstack}.gradebook
     image: node:10
     ports:
       - "1994:1994"
     environment:
       - NODE_ENV=development
-      
+    networks:
+      default:
+        aliases:
+          - edx.devstack.gradebook
+
 volumes:
   discovery_assets:
   edxapp_lms_assets:
