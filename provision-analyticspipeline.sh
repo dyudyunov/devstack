@@ -27,7 +27,7 @@ then
   echo -e "${GREEN}LMS DB exists, skipping lms schema load.${NC}"
 else
   echo -e "${GREEN}LMS DB not found, provisioning lms schema.${NC}"
-  docker exec -i edx.devstack.mysql mysql -uroot mysql < provision.sql
+  docker-compose exec -T mysql mysql -uroot mysql < provision.sql
   ./load-db.sh edxapp
   docker-compose $DOCKER_COMPOSE_FILES up -d lms studio
   docker-compose exec -T lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && NO_PYTHON_UNINSTALL=1 paver install_prereqs'
@@ -39,7 +39,7 @@ fi
 
 echo -e "${GREEN}LMS database provisioned successfully...${NC}"
 echo -e "${GREEN}Creating databases and users...${NC}"
-docker exec -i edx.devstack.mysql mysql -uroot mysql < provision-analytics-pipeline.sql
+docker-compose exec -T mysql mysql -uroot mysql < provision-analytics-pipeline.sql
 
 # initialize hive metastore
 echo -e "${GREEN}Initializing HIVE metastore...${NC}"
@@ -56,4 +56,4 @@ done
 sleep 10 # for datanode & other services to activate
 echo -e "${GREEN}Namenode is ready!${NC}"
 
-docker exec -u hadoop -i edx.devstack.analytics_pipeline bash -c 'sudo /edx/app/hadoop/hadoop/bin/hdfs dfs -chown -R hadoop:hadoop hdfs://namenode:8020/; hdfs dfs -mkdir -p hdfs://namenode:8020/edx-analytics-pipeline/{warehouse,marker,manifest,packages} hdfs://namenode:8020/{spark-warehouse,data} hdfs://namenode:8020/tmp/spark-events;hdfs dfs -copyFromLocal -f /edx/app/hadoop/lib/edx-analytics-hadoop-util.jar hdfs://namenode:8020/edx-analytics-pipeline/packages/;'
+docker-compose exec -u hadoop -T analytics_pipeline bash -c 'sudo /edx/app/hadoop/hadoop/bin/hdfs dfs -chown -R hadoop:hadoop hdfs://namenode:8020/; hdfs dfs -mkdir -p hdfs://namenode:8020/edx-analytics-pipeline/{warehouse,marker,manifest,packages} hdfs://namenode:8020/{spark-warehouse,data} hdfs://namenode:8020/tmp/spark-events;hdfs dfs -copyFromLocal -f /edx/app/hadoop/lib/edx-analytics-hadoop-util.jar hdfs://namenode:8020/edx-analytics-pipeline/packages/;'

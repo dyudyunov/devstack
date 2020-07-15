@@ -11,7 +11,7 @@ DEVSTACK_WORKSPACE ?= $(shell pwd)/..
 # Name of Docker Compose project.
 # See https://docs.docker.com/compose/reference/envvars/#compose_project_name
 # Defaults to 'devstack'.
-COMPOSE_PROJECT_NAME ?= devstack
+COMPOSE_PROJECT_NAME ?= juniper
 
 # increase Docker Compose HTTP timeout so that devstack provisioning does not fail in unstable networks
 COMPOSE_HTTP_TIMEOUT=180
