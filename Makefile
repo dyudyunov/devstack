@@ -33,6 +33,8 @@ export COMPOSE_PROJECT_NAME
 export DEVSTACK_WORKSPACE
 export OPENEDX_RELEASE
 
+# Setting this variable to true will cause minimal Devstack installation (studio and lms)
+DEVSTACK_MINIMAL ?= "false"
 # Include options (configurable through options.local.mk)
 include options.mk
 
@@ -71,6 +73,10 @@ endif
 ifeq ($(FS_SYNC_STRATEGY),docker-sync)
 DOCKER_COMPOSE_FILES := \
 -f docker-compose-sync.yml
+endif
+
+ifeq ($(DEVSTACK_MINIMAL),true)
+DEFAULT_SERVICES := lms+studio
 endif
 
 ifndef DOCKER_COMPOSE_FILES
