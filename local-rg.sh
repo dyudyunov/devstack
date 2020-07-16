@@ -37,8 +37,10 @@ repos=(
     "https://github.com/edx/edx-e2e-tests.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/edx/edx-notes-api.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/raccoongang/edx-platform.git,juniper-rg"
-    "https://github.com/raccoongang/edx-theme.git,base-juniper-stage"
+    "https://github.com/raccoongang/edx-theme.git,base-hawthorn-stage"
     "https://github.com/edx/xqueue.git,open-release/${OPENEDX_RELEASE}"
     "https://github.com/edx/edx-analytics-pipeline.git,open-release/${OPENEDX_RELEASE}"
+    "ssh://git@gitlab.raccoongang.com/rg-developers/instructor-analytics.git,master"
+    "ssh://git@gitlab.raccoongang.com/rg-developers/instructor-analytics-log-collector.git,master"
 )
 export repos

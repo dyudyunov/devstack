@@ -445,3 +445,6 @@ feature-toggle-state: ## Gather the state of feature toggles configured for vari
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."
+
+rg-analytics-collect-logs: ## Run migrations LMS container
+	docker-compose exec lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform && export DJANGO_SETTINGS_MODULE=lms.envs.devstack_docker && export SERVICE_VARIANT=lms ; while true ; do timeout 40 python /edx/app/edxapp/venvs/edxapp/src/rg-instructor-analytics-log-collector/run_log_watcher.py --sleep_time 40 --tracking_log_dir /edx/var/log/tracking --delete-logs ; echo "from rg_instructor_analytics.tasks import grade_collector_stat; grade_collector_stat()" | python ./manage.py lms shell --settings=devstack_docker ; done'

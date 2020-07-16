@@ -73,7 +73,7 @@ else
     ssh_repos+=("${non_release_ssh_repos[@]}")
 fi
 
-name_pattern=".*/(.*).git"
+name_pattern='^(.*)/([^/]+).git$'
 
 _checkout ()
 {
