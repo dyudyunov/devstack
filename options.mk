@@ -22,6 +22,8 @@ COMPOSE_HTTP_TIMEOUT=180
 # Defaults to false.
 ALWAYS_CACHE_PROGRAMS ?= false
 
+# Path to key, which will be used inside lms and studio container
+SSH_KEY_LOCATION ?= ~/.ssh/id_rsa
 # FileSystem Synchronization Strategy.
 # How should we synchronize files between the host machine and the Docker containers?
 # Options are 'local-mount', 'nfs', and 'docker-sync'.
