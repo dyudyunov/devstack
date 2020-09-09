@@ -122,10 +122,12 @@ RG Instructor Analytics
     }
     LOGGING['loggers']['tracking']['handlers'] = ['tracking']
 
-* ``make provision`` (duh!)
+* ``make dev.provision.lms`` (new command for quick LMS provision)
 * start and keep running log_collector ``make rg-analytics-collect-logs`` in separate terminal window
 * make some progress on Demo Course
-* investigate statistics in ``Instructor analytics`` tab with ``SIENCE COURSE START`` range selected
+* investigate statistics in ``Instructor analytics`` tab with ``SINCE COURSE START`` range selected
+* developing for ``rg-instructor-analytics`` and ``rg-instructor-analytics-log-collector`` modules can
+  be done in ``../src/edxapp-venvs-src/`` directory on docker host computer
 
 OFFICIAL DEVSTACK README BELOW
 ==============================
