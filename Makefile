@@ -43,6 +43,9 @@ dev.clone: ## Clone service repos to the parent directory
 dev.provision.run: ## Provision all services with local mounted directories
 	DOCKER_COMPOSE_FILES="-f docker-compose.yml -f docker-compose-host.yml" ./provision.sh
 
+dev.provision.lms: ## Provision LMS and STUDIO only with local mounted directories
+	DOCKER_COMPOSE_FILES="-f docker-compose.yml -f docker-compose-host.yml" LMS_ONLY=1 ./provision.sh
+
 dev.provision: | check-memory dev.clone dev.provision.run stop ## Provision dev environment with all services stopped
 
 dev.provision.xqueue: | check-memory dev.provision.xqueue.run stop stop.xqueue
@@ -197,13 +200,13 @@ xqueue_consumer-restart: ## Kill the XQueue development server. The watcher proc
 	docker exec -t edx.devstack.xqueue_consumer bash -c 'kill $$(ps aux | grep "manage.py run_consumer" | egrep -v "while|grep" | awk "{print \$$2}")'
 
 %-static: ## Rebuild static assets for the specified service container
-	docker exec -t edx.devstack.$* bash -c 'source /edx/app/$*/$*_env && cd /edx/app/$*/$*/ && make static'
+	docker exec -ti edx.devstack.$* bash -c 'source /edx/app/$*/$*_env && cd /edx/app/$*/$*/ && make static'
 
 lms-static: ## Rebuild static assets for the LMS container
-	docker exec -t edx.devstack.lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform/ && paver update_assets'
+	docker exec -ti edx.devstack.lms bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform/ && paver update_assets lms'
 
 studio-static: ## Rebuild static assets for the Studio container
-	docker exec -t edx.devstack.studio bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform/ && paver update_assets'
+	docker exec -ti edx.devstack.studio bash -c 'source /edx/app/edxapp/edxapp_env && cd /edx/app/edxapp/edx-platform/ && paver update_assets studio'
 
 static: | credentials-static discovery-static ecommerce-static lms-static studio-static ## Rebuild static assets for all service containers
 

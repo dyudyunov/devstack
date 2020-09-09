@@ -38,7 +38,7 @@ for conf in lms.env.json.gz cms.env.json.gz ; do
 done
 
 # Bring the databases online.
-docker-compose up -d mysql mongo
+docker-compose ${DOCKER_COMPOSE_FILES} up -d mysql mongo
 
 # Ensure the MySQL server is online and usable
 echo "Waiting for MySQL"
@@ -60,26 +60,39 @@ echo -e "${GREEN}Creating databases and users...${NC}"
 docker exec -i edx.devstack.mysql mysql -uroot mysql < provision.sql
 docker exec -i edx.devstack.mongo mongo < mongo-provision.js
 
+if [ `find ${DEVSTACK_WORKSPACE}/src/mongo-backup/ | wc -l` -lt 2 -o -z "${LMS_ONLY}" ]; then
+  echo -e "${GREEN}Restoring prepared MONGO dump...${NC}"
+  tar zxf mongo-dump.tar.gz -C ${DEVSTACK_WORKSPACE}/src/mongo-backup/
+  docker exec -i edx.devstack.mongo bash -c "mongorestore --drop /backup"
+fi
+
 ./provision-lms.sh
 
 # Nothing special needed for studio
 docker-compose $DOCKER_COMPOSE_FILES up -d studio
-./provision-ecommerce.sh
-./provision-discovery.sh
-./provision-credentials.sh
-./provision-e2e.sh
-./provision-forum.sh
-./provision-notes.sh
 
-docker image prune -f
+if [ -z "$LMS_ONLY" ]; then
+  ./provision-ecommerce.sh
+  ./provision-discovery.sh
+  ./provision-credentials.sh
+  ./provision-e2e.sh
+  ./provision-forum.sh
+  ./provision-notes.sh
 
-set +x
-echo -e "${RED}
+  docker image prune -f
+
+else
+
+  set +x
+  echo -e "${RED}
       ==================================
       === STATIC ASSETS NOT COMPILED ===
       === please run                 ===
       ===   make lms-static          ===
       ===   make studio-static       ===
       ==================================
-${NC}"
-echo -e "${GREEN}Provisioning complete!${NC}"
+  ${NC}"
+  echo -e "${GREEN}Provisioning complete!${NC}"
+
+fi
+

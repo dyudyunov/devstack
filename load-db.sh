@@ -17,10 +17,13 @@ then
 fi
 
 echo "Loading the $1 database..."
-if [ -f $1.sql.gz ]; then
+if [ -f $1.sql ]; then
+    docker exec -i edx.devstack.mysql mysql -uroot $1 < $1.sql
+elif [ -f $1.sql.gz ]; then
     gzip -dc $1.sql.gz | docker exec -i edx.devstack.mysql mysql -uroot $1
 else
-    docker exec -i edx.devstack.mysql mysql -uroot $1 < $1.sql
+    echo "ERROR: dump file not found - $1.sql or $1.sql.gz"
+    exit 1
 fi
 
 echo "Finished loading the $1 database!"
