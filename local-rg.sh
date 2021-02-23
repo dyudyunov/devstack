@@ -20,7 +20,7 @@ export COMPOSE_PROJECT_NAME
 #
 # Your can keep single workspace for multiple projects by
 # specifying here the full path to workspace directory
-DEVSTACK_WORKSPACE ?= $(shell pwd)/..
+DEVSTACK_WORKSPACE=$(pwd)/..
 export  DEVSTACK_WORKSPACE
 # Default suffix while selecting branch name for ALL repositories.
 # Many OpenEdx devstack management scripts relies on this variable.
