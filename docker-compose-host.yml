@@ -22,6 +22,7 @@ services:
       - edxapp_node_modules:/edx/app/edxapp/edx-platform/node_modules
       - ${DEVSTACK_WORKSPACE}/src:/edx/src:cached
       - ${DEVSTACK_WORKSPACE}/edx-theme:/edx/app/edxapp/themes/edx-theme:cached
+      - ~/.ssh:/root/.ssh
   edx_notes_api:
     volumes:
       - ${DEVSTACK_WORKSPACE}/edx-notes-api:/edx/app/edx_notes_api/edx_notes_api:cached
@@ -32,6 +33,7 @@ services:
       - edxapp_node_modules:/edx/app/edxapp/edx-platform/node_modules
       - ${DEVSTACK_WORKSPACE}/src:/edx/src:cached
       - ${DEVSTACK_WORKSPACE}/edx-theme:/edx/app/edxapp/themes/edx-theme:cached
+      - ~/.ssh:/root/.ssh
   forum:
     volumes:
       - ${DEVSTACK_WORKSPACE}/cs_comments_service:/edx/app/forum/cs_comments_service:cached
